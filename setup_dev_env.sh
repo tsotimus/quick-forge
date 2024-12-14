@@ -97,13 +97,5 @@ else
   echo_msg "Skipping pnpm installation."
 fi
 
-# Install Docker
-if prompt_user "Install Docker (Apple Silicon version)?"; then
-  echo_msg "Installing Docker..."
-  brew install --cask docker
-else
-  echo_msg "Skipping Docker installation."
-fi
-
 # Final Steps
 echo_msg "Setup complete! Don't forget to open Docker Desktop and log in if required."
