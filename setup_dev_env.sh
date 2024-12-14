@@ -53,12 +53,12 @@ else
   echo_msg "Skipping Git installation."
 fi
 
-# Install VSCode
-if prompt_user "Install Visual Studio Code (Apple Silicon version)?"; then
-  echo_msg "Installing Visual Studio Code..."
-  brew install --cask visual-studio-code
+# Open VSCode download page in Safari
+if prompt_user "Open Visual Studio Code download page in Safari?"; then
+  echo_msg "Opening Visual Studio Code download page..."
+  open -a Safari "https://code.visualstudio.com/download"
 else
-  echo_msg "Skipping Visual Studio Code installation."
+  echo_msg "Skipping Visual Studio Code download page."
 fi
 
 # Install Volta and Node.js
@@ -97,5 +97,36 @@ else
   echo_msg "Skipping pnpm installation."
 fi
 
+# Install and configure WezTerm
+if prompt_user "Install WezTerm (a GPU-accelerated terminal emulator)?"; then
+  echo_msg "Installing WezTerm..."
+  brew install --cask wezterm
+
+  if prompt_user "Would you like to configure WezTerm?"; then
+    echo_msg "Configuring WezTerm..."
+    
+    # Install MesloLGS Nerd Font
+    echo_msg "Installing MesloLGS Nerd Font Mono..."
+    brew tap homebrew/cask-fonts
+    brew install --cask font-meslo-lg-nerd-font
+    
+    # Copy the configuration
+    cp ./wezterm_config.lua "$HOME/.wezterm.lua"
+    echo_msg "WezTerm configuration installed to ~/.wezterm.lua."
+  fi
+fi
+
+# Install and configure Zsh
+if prompt_user "Configure Zsh?"; then
+  echo_msg "Installing Zsh tools..."
+  
+  # Install required tools
+  brew install powerlevel10k zsh-autosuggestions zsh-syntax-highlighting fzf eza zoxide thefuck
+
+  # Append the Zsh configuration snippet to ~/.zshrc
+  cat ./zsh_config_snippet.zsh >> "$HOME/.zshrc"
+  echo_msg "Zsh configuration updated. Please reload your terminal or source ~/.zshrc."
+fi
+
 # Final Steps
-echo_msg "Setup complete! Don't forget to open Docker Desktop and log in if required."
+echo_msg "Setup complete!"

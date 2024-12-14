@@ -15,3 +15,11 @@ Quickly setup a new macbook with everything that you need to develop in the Type
 - Installs VSCode
 - Installs node (volta)/deno/bun
 - Installs pnpm
+- Installs and Configures Wezterm
+- Configures zsh
+
+
+### ZSH Config
+Most of the config comes from these two videos:
+[First Video](https://www.youtube.com/watch?v=mmqDYw9C30I)
+[Second Video](https://www.youtube.com/watch?v=TTgQV21X0SQ)
