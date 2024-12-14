@@ -31,18 +31,51 @@ if ! command -v brew &>/dev/null; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   
   echo_msg "Adding Homebrew to PATH..."
-  
-  # Dynamically get the user's home directory and append the required path
   SHELL_PROFILE="$HOME/.zprofile"
-  touch "$SHELL_PROFILE"  # Ensure the file exists
-  
-  # Add Homebrew shellenv to the shell profile
+  touch "$SHELL_PROFILE"
   echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$SHELL_PROFILE"
-  
-  # Apply the changes for the current session
   eval "$(/opt/homebrew/bin/brew shellenv)"
 else
   echo_msg "Homebrew is already installed."
+fi
+
+# SSH Key Setup
+if prompt_user "Set up a GitHub SSH key?"; then
+  echo_msg "Setting up GitHub SSH key..."
+
+  # Prompt user for GitHub email
+  read -p "Enter your GitHub email address: " GITHUB_EMAIL
+
+  # Generate SSH key
+  ssh-keygen -t ed25519 -C "$GITHUB_EMAIL" -f "$HOME/.ssh/id_ed25519" -N "" && echo_msg "SSH key generated."
+
+  # Start the ssh-agent
+  eval "$(ssh-agent -s)"
+
+  # Create or update SSH config file
+  SSH_CONFIG="$HOME/.ssh/config"
+  if [[ ! -f "$SSH_CONFIG" ]]; then
+    touch "$SSH_CONFIG"
+  fi
+
+  # Add configuration for GitHub
+  grep -qxF 'Host github.com' "$SSH_CONFIG" || cat >> "$SSH_CONFIG" <<EOL
+
+Host github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+EOL
+
+  # Add the key to the agent and macOS keychain
+  ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" && echo_msg "SSH key added to ssh-agent and keychain."
+
+  # Copy public key to clipboard
+  pbcopy < "$HOME/.ssh/id_ed25519.pub" && echo_msg "Public key copied to clipboard. Add it to your GitHub account."
+  
+  echo_msg "Go to https://github.com/settings/keys to add your new SSH key."
+else
+  echo_msg "Skipping SSH key setup."
 fi
 
 # Install Git
@@ -53,12 +86,12 @@ else
   echo_msg "Skipping Git installation."
 fi
 
-# Open VSCode download page in Safari
-if prompt_user "Open Visual Studio Code download page in Safari?"; then
-  echo_msg "Opening Visual Studio Code download page..."
-  open -a Safari "https://code.visualstudio.com/download"
+# Install Visual Studio Code
+if prompt_user "Install Visual Studio Code?"; then
+  echo_msg "Installing Visual Studio Code..."
+  brew install --cask visual-studio-code && echo_msg "Visual Studio Code installed successfully."
 else
-  echo_msg "Skipping Visual Studio Code download page."
+  echo_msg "Skipping Visual Studio Code installation."
 fi
 
 # Install Volta and Node.js
@@ -98,19 +131,15 @@ else
 fi
 
 # Install and configure WezTerm
-if prompt_user "Install WezTerm (a GPU-accelerated terminal emulator)?"; then
+if prompt_user "Install WezTerm?"; then
   echo_msg "Installing WezTerm..."
   brew install --cask wezterm
 
   if prompt_user "Would you like to configure WezTerm?"; then
     echo_msg "Configuring WezTerm..."
-    
-    # Install MesloLGS Nerd Font
     echo_msg "Installing MesloLGS Nerd Font Mono..."
     brew tap homebrew/cask-fonts
     brew install --cask font-meslo-lg-nerd-font
-    
-    # Copy the configuration
     cp ./wezterm_config.lua "$HOME/.wezterm.lua"
     echo_msg "WezTerm configuration installed to ~/.wezterm.lua."
   fi
@@ -119,14 +148,34 @@ fi
 # Install and configure Zsh
 if prompt_user "Configure Zsh?"; then
   echo_msg "Installing Zsh tools..."
-  
-  # Install required tools
   brew install powerlevel10k zsh-autosuggestions zsh-syntax-highlighting fzf eza zoxide thefuck
-
-  # Append the Zsh configuration snippet to ~/.zshrc
   cat ./zsh_config_snippet.zsh >> "$HOME/.zshrc"
   echo_msg "Zsh configuration updated. Please reload your terminal or source ~/.zshrc."
 fi
+
+# Prompt user to choose between Zen Browser and Arc Browser
+echo_msg "Would you like to install a browser?"
+echo "1) Zen Browser"
+echo "2) Arc Browser"
+echo "3) Skip browser installation"
+read -p "Enter the number of your choice: " browser_choice
+
+case $browser_choice in
+  1)
+    echo_msg "Installing Zen Browser..."
+    brew install --cask zen-browser && echo_msg "Zen Browser installed successfully."
+    ;;
+  2)
+    echo_msg "Installing Arc Browser..."
+    brew install --cask arc && echo_msg "Arc Browser installed successfully."
+    ;;
+  3)
+    echo_msg "Skipping browser installation."
+    ;;
+  *)
+    echo_msg "Invalid choice. Skipping browser installation."
+    ;;
+esac
 
 # Final Steps
 echo_msg "Setup complete!"
