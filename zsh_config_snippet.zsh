@@ -80,5 +80,19 @@ eval $(thefuck --alias fk)
 alias ls="eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions"
 alias cd="z"
 
+# Git aliases
+alias g='git'                      # Shortcut to replace 'git' with 'g'
+alias gs='git status'              # Check current branch status
+alias ga='git add'                 # Stage specific files
+alias gaa='git add --all'          # Stage all changes (tracked and untracked)
+alias gc='git commit'              # Commit staged changes
+alias gap='git add --patch'        # Interactive staging of changes (hunks)
+alias gp='git push'                # Push commits to the remote
+alias gl='git log'                 # Show commit history
+alias gb='git branch'              # List or manage branches
+alias gco='git checkout'           # Switch branches or restore files
+alias gcm='git commit -m'          # Commit with a message inline
+alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
+
 # Bind tab to accept autosuggest
 bindkey '\t' autosuggest-accept

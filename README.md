@@ -29,12 +29,28 @@ Most of the config comes from these two videos:
 [First Video](https://www.youtube.com/watch?v=mmqDYw9C30I)
 [Second Video](https://www.youtube.com/watch?v=TTgQV21X0SQ)
 
+### Git Alias's
+```shell
+alias g='git'                      # Shortcut to replace 'git' with 'g'
+alias gs='git status'              # Check current branch status
+alias ga='git add'                 # Stage specific files
+alias gaa='git add --all'          # Stage all changes (tracked and untracked)
+alias gc='git commit'              # Commit staged changes
+alias gap='git add --patch'        # Interactive staging of changes (hunks)
+alias gp='git push'                # Push commits to the remote
+alias gl='git log'                 # Show commit history
+alias gb='git branch'              # List or manage branches
+alias gco='git checkout'           # Switch branches or restore files
+alias gcm='git commit -m'          # Commit with a message inline
+alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
+```
 
 ## Getting started
 
 1. Either `git clone` or just download as a zip.
 2. Run `chmod +x setup.sh`
 3. Run `sh setup.sh` 
+
 
 
 #### Future Enhancements
