@@ -1,26 +1,26 @@
-# FireFlight TS
+# Quick Forge
 
-Quickly setup a new macbook with everything that you need to develop in the Typescript eco-system. Currently apple silicon only.
+Quickly set up a new MacBook with everything you need to develop in the JavaScript/TypeScript ecosystem.
 
 
 ## Key Features
-- 1 script to install them all
-- Modular installs, choose what you need and don't need
-- zsh config
+- One script to install and configure your development environment.
+- Modular installs: choose what you need and skip what you don’t.
+- Pre-configured zsh for enhanced productivity.
 
 ## What does the script do?
 
-- Installs homebrew
-- Installs git and sets up SSH
-- Installs VSCode
-- Installs node (volta)/deno/bun
-- Installs pnpm
-- Installs and Configures Wezterm
-- Configures zsh
-- Installs Zen or Arc
+- Installs Homebrew, the macOS package manager.
+- Installs Git and sets up an SSH key for GitHub.
+- Installs Visual Studio Code (VSCode).
+- Installs Node.js (via Volta), Deno, and Bun.
+- Installs pnpm, the fast JavaScript package manager.
+- Installs and configures WezTerm, a modern terminal emulator.
+- Configures zsh with plugins for autosuggestions, syntax highlighting, and more.
+- Lets you choose between installing Zen Browser or Arc Browser.
 
 
-### ZSH Config
+### ZSH Config and WezTerm config
 Most of the config comes from these two videos:
 [First Video](https://www.youtube.com/watch?v=mmqDYw9C30I)
 [Second Video](https://www.youtube.com/watch?v=TTgQV21X0SQ)
@@ -28,6 +28,14 @@ Most of the config comes from these two videos:
 
 ## Getting started
 
-1. Either `git clone` or just download via `github`
-2. Run `chmod`
+1. Either `git clone` or just download as a zip.
+2. Run `chmod +x setup.sh`
 3. Run `sh setup.sh` 
+
+
+#### Future Enhancements
+
+Future Enhancements (optional section)
+- Add support for other development ecosystems (Python, Go, etc.).
+- Integration with Docker or Kubernetes for containerized setups.
+- Optional database installation (PostgreSQL, MongoDB, etc.).
