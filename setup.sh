@@ -39,6 +39,14 @@ else
   echo_msg "Homebrew is already installed."
 fi
 
+# Install Git
+if prompt_user "Install Git?"; then
+  echo_msg "Installing Git..."
+  brew install git
+else
+  echo_msg "Skipping Git installation."
+fi
+
 # SSH Key Setup
 if prompt_user "Set up a GitHub SSH key?"; then
   echo_msg "Setting up GitHub SSH key..."
@@ -78,13 +86,6 @@ else
   echo_msg "Skipping SSH key setup."
 fi
 
-# Install Git
-if prompt_user "Install Git?"; then
-  echo_msg "Installing Git..."
-  brew install git
-else
-  echo_msg "Skipping Git installation."
-fi
 
 # Install Visual Studio Code
 if prompt_user "Install Visual Studio Code?"; then
