@@ -3,10 +3,14 @@
 Quickly set up a new MacBook with everything you need to develop in the JavaScript/TypeScript ecosystem.
 
 
+
+
 ## Key Features
 - One script to install and configure your development environment.
 - Modular installs: choose what you need and skip what you don’t.
 - Pre-configured zsh for enhanced productivity.
+
+![Quick Forge Terminal Screenshot](./screenshot.png)
 
 ## What does the script do?
 
