@@ -43,6 +43,9 @@ fi
 if prompt_user "Install Git?"; then
   echo_msg "Installing Git..."
   brew install git
+
+  echo_msg "Configuring Git's push.autoSetupRemote to always set up tracking branches..."
+  git config --global push.autoSetupRemote true
 else
   echo_msg "Skipping Git installation."
 fi
