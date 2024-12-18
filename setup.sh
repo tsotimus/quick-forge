@@ -123,12 +123,14 @@ else
   echo_msg "Skipping Deno installation."
 fi
 
-# Install pnpm
-if prompt_user "Install pnpm?"; then
-  echo_msg "Installing pnpm..."
-  npm install -g pnpm
+# Install Corepack and enable package manager support
+if prompt_user "Install Corepack?"; then
+  echo_msg "Installing Corepack..."
+  brew install node # Corepack is part of Node.js formula in Homebrew
+  corepack enable
+  echo_msg "Corepack installed and enabled successfully."
 else
-  echo_msg "Skipping pnpm installation."
+  echo_msg "Skipping Corepack installation."
 fi
 
 # Install and configure WezTerm
