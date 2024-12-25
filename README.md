@@ -41,6 +41,7 @@ alias gp='git push'                # Push commits to the remote
 alias gl='git log'                 # Show commit history
 alias gb='git branch'              # List or manage branches
 alias gco='git checkout'           # Switch branches or restore files
+alias gcon='git checkout -b'       # Checkout and create a new branch
 alias gcm='git commit -m'          # Commit with a message inline
 alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
 ```
