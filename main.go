@@ -14,8 +14,11 @@ func main() {
 		Short: "QuickForge sets up your Mac dev environment",
 		Run: func(_ *cobra.Command, args []string) {
 			fmt.Println("🔧 Welcome to QuickForge!")
-			cmd.CheckBrew()
-			cmd.AskToInstallGit()
+			if cmd.CheckBrew() {
+				cmd.AskToInstallGit()
+			} else {
+				cmd.InstallBrew()
+			}
 		},
 	}
 

@@ -1,8 +1,11 @@
-# Start from a minimal Go environment
-FROM golang:1.22-alpine
+# Start from a Debian-based Go environment
+FROM golang:1.24
 
-# Install basic tools
-RUN apk add --no-cache bash git
+# Install basic tools needed for Homebrew and general usage
+RUN apt-get update && \
+    apt-get install -y bash git curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
