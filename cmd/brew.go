@@ -21,10 +21,7 @@ func CheckBrew() bool {
 func InstallBrew() {
 	fmt.Println("🛠️ Installing Homebrew...")
 
-	// Step 1: Install Homebrew
-	cmd := exec.Command("/bin/bash", "-c", "curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd := exec.Command("/bin/bash", "-c", "curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>&1")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("❌ Failed to install Homebrew:", err)
 		return
