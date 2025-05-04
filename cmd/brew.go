@@ -18,7 +18,7 @@ func CheckBrew() bool {
 	}
 }
 
-func InstallBrew() {
+func InstallBrew(shellConfigFile string) {
 	fmt.Println("🛠️ Installing Homebrew...")
 
 	cmd := exec.Command("/bin/bash", "-c", "curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>&1")
@@ -37,7 +37,7 @@ func InstallBrew() {
 	}
 
 	// Use .zshrc instead of .bashrc
-	rcFile := filepath.Join(home, ".zshrc")
+	rcFile := filepath.Join(home, shellConfigFile)
 	shellenvLine := `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"`
 
 	appendCmd := exec.Command("sh", "-c", fmt.Sprintf(`echo >> %s && echo '%s' >> %s`, rcFile, shellenvLine, rcFile))
@@ -58,4 +58,14 @@ func InstallBrew() {
 	}
 
 	fmt.Println("✅ Homebrew path setup complete.")
+}
+
+func CheckBrewVersion() {
+	cmd := exec.Command("brew", "--version")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println("❌ Failed to check Homebrew version:", err)
+		return
+	}
+	fmt.Printf("✅ Homebrew version:\n%s\n", output)
 }
