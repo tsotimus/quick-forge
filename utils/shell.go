@@ -3,20 +3,26 @@ package utils
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/mitchellh/go-ps"
 )
 
-func GetParentShell() (string, bool) {
+func DetectShell() (string, bool) {
+	// First try $SHELL
+	if shellPath := os.Getenv("SHELL"); shellPath != "" {
+		return filepath.Base(shellPath), true
+	}
+
+	// Fallback to parent process
 	pid := os.Getppid()
 	process, err := ps.FindProcess(pid)
-
-	if err != nil || process == nil {
-		fmt.Println("Could not detect parent process.")
-		return "", false
+	if err == nil && process != nil {
+		return process.Executable(), true
 	}
-	fmt.Println("Parent process:", process.Executable())
-	return process.Executable(), true
+
+	// Couldn’t detect
+	return "", false
 }
 
 // Input: bash, zsh, fish, etc

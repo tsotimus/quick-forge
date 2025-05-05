@@ -19,7 +19,7 @@ func main() {
 			hammer := lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Render("🔨")
 			fmt.Println(lightning + " Welcome to QuickForge! " + hammer)
 			utils.CheckOSSupported()
-			shell, ok := utils.GetParentShell()
+			shell, ok := utils.DetectShell()
 			if !ok {
 				fmt.Println("Parent shell not found")
 				return
