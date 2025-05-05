@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/tsotimus/quickforge/cmd"
 	"github.com/tsotimus/quickforge/utils"
@@ -14,7 +15,10 @@ func main() {
 		Use:   "quickforge",
 		Short: "QuickForge sets up your Mac dev environment",
 		Run: func(_ *cobra.Command, args []string) {
-			fmt.Println("🔧 Welcome to QuickForge!")
+			lightning := lipgloss.NewStyle().Foreground(lipgloss.Color("226")).Render("⚡")
+			hammer := lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Render("🔨")
+			fmt.Println(lightning + " Welcome to QuickForge! " + hammer)
+			utils.CheckOSSupported()
 			shell, ok := utils.GetParentShell()
 			if !ok {
 				fmt.Println("Parent shell not found")
