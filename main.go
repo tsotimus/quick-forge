@@ -21,7 +21,7 @@ func main() {
 			utils.CheckOSSupported()
 			shell, ok := utils.DetectShell()
 			if !ok {
-				fmt.Println("Parent shell not found")
+				fmt.Println("Shell not found")
 				return
 			}
 

@@ -60,7 +60,6 @@ func SetupSSHKey() {
 
 	fmt.Println("🔐 Setting up GitHub SSH key...")
 
-	// Get GitHub email
 	email := ui.AskForInput(
 		"✉️  Enter your GitHub email address: ",
 		"example@gmail.com",
@@ -68,8 +67,9 @@ func SetupSSHKey() {
 		input.WithValidateFunc(validateEmail),
 	)
 
-	sshKeyPath := os.Getenv("HOME") + "/.ssh/id_ed25519"
-	sshConfigPath := os.Getenv("HOME") + "/.ssh/config"
+	home := os.Getenv("HOME")
+	sshKeyPath := home + "/.ssh/id_ed25519"
+	sshConfigPath := home + "/.ssh/config"
 
 	// Generate SSH key
 	cmd := exec.Command("ssh-keygen", "-t", "ed25519", "-C", email, "-f", sshKeyPath, "-N", "")
@@ -82,17 +82,37 @@ func SetupSSHKey() {
 	}
 	fmt.Println("✅ SSH key generated.")
 
-	// Start SSH agent
-	out, err := exec.Command("ssh-agent", "-s").Output()
-	if err != nil {
-		fmt.Println("❌ Failed to start ssh-agent:", err)
-		return
+	// Start SSH agent if not already running
+	sshAuthSock := os.Getenv("SSH_AUTH_SOCK")
+	sshAgentPid := os.Getenv("SSH_AGENT_PID")
+
+	if sshAuthSock == "" || sshAgentPid == "" {
+		fmt.Println("🚀 Starting ssh-agent...")
+		out, err := exec.Command("ssh-agent", "-s").Output()
+		if err != nil {
+			fmt.Println("❌ Failed to start ssh-agent:", err)
+			return
+		}
+		fmt.Print(string(out)) // Print agent info
+
+		// Parse and set SSH_AUTH_SOCK and SSH_AGENT_PID
+		reSock := regexp.MustCompile(`SSH_AUTH_SOCK=([^;]+);`)
+		if match := reSock.FindStringSubmatch(string(out)); len(match) > 1 {
+			sshAuthSock = match[1]
+			os.Setenv("SSH_AUTH_SOCK", sshAuthSock)
+		}
+		rePid := regexp.MustCompile(`SSH_AGENT_PID=([0-9]+);`)
+		if match := rePid.FindStringSubmatch(string(out)); len(match) > 1 {
+			sshAgentPid = match[1]
+			os.Setenv("SSH_AGENT_PID", sshAgentPid)
+		}
+	} else {
+		fmt.Println("🧠 Using existing ssh-agent.")
 	}
-	fmt.Print(string(out)) // Show agent pid
 
 	// Ensure SSH config exists
 	if _, err := os.Stat(sshConfigPath); os.IsNotExist(err) {
-		_ = os.MkdirAll(os.Getenv("HOME")+"/.ssh", 0700)
+		_ = os.MkdirAll(home+"/.ssh", 0700)
 		_, _ = os.Create(sshConfigPath)
 	}
 
