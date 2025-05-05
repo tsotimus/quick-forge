@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/cqroot/prompt"
 	"github.com/cqroot/prompt/choose"
 	"github.com/cqroot/prompt/input"
@@ -21,10 +22,33 @@ func CheckErr(err error) {
 	}
 }
 
+var (
+	highlightStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4fc7c1")).Bold(true)
+	normalStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("245"))
+)
+
+var BlueHighlightTheme choose.Theme = func(choices []choose.Choice, selectedIndex int) string {
+	s := ""
+	for i, choice := range choices {
+		text := choice.Text
+		if i == selectedIndex {
+			s += highlightStyle.Render(text) // Highlight the selected choice
+		} else {
+			s += normalStyle.Render(text) // Normal style for other choices
+		}
+
+		// If it's not the last choice, add the separator (no styling)
+		if i != len(choices)-1 {
+			s += " / " // Add the unstyled separator
+		}
+	}
+	return s
+}
+
 func AskYesNo(question string) bool {
 	answer, err := prompt.New().Ask(question).Choose(
 		[]string{"Yes", "No"},
-		choose.WithTheme(choose.ThemeLine),
+		choose.WithTheme(choose.Theme(BlueHighlightTheme)),
 		choose.WithKeyMap(choose.HorizontalKeyMap),
 		// choose.WithSelectedMark("👉"),
 	)
