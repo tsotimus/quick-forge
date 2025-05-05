@@ -50,7 +50,6 @@ func AskYesNo(question string) bool {
 		[]string{"Yes", "No"},
 		choose.WithTheme(choose.Theme(BlueHighlightTheme)),
 		choose.WithKeyMap(choose.HorizontalKeyMap),
-		// choose.WithSelectedMark("👉"),
 	)
 	CheckErr(err)
 	return answer == "Yes"
@@ -58,6 +57,15 @@ func AskYesNo(question string) bool {
 
 func AskForInput(question string, defaultValue string, opts ...input.Option) string {
 	answer, err := prompt.New().Ask(question).Input(defaultValue, opts...)
+	CheckErr(err)
+	return answer
+}
+
+func AskSimpleChoice(question string, choices []string, opts ...choose.Option) string {
+	answer, err := prompt.New().Ask(question).Choose(choices,
+		choose.WithTheme(choose.Theme(BlueHighlightTheme)),
+		choose.WithKeyMap(choose.HorizontalKeyMap),
+	)
 	CheckErr(err)
 	return answer
 }

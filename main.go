@@ -39,6 +39,7 @@ func main() {
 			} else {
 				cmd.AskToInstallGit()
 				cmd.SetupSSHKey()
+				cmd.InstallEditor()
 			}
 		},
 	}
