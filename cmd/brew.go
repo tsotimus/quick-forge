@@ -59,13 +59,3 @@ func InstallBrew(shellConfigFile string) {
 
 	fmt.Println("✅ Homebrew path setup complete.")
 }
-
-func CheckBrewVersion() {
-	cmd := exec.Command("brew", "--version")
-	output, err := cmd.Output()
-	if err != nil {
-		fmt.Println("❌ Failed to check Homebrew version:", err)
-		return
-	}
-	fmt.Printf("✅ Homebrew version:\n%s\n", output)
-}

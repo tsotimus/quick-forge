@@ -1,50 +1,59 @@
 package cmd
 
 import (
-	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
+
+	"github.com/cqroot/prompt/input"
+	"github.com/tsotimus/quickforge/ui"
 )
 
-func AskToInstallGit() {
-	fmt.Print("Do you want to install Git? (y/n): ")
-	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('\n')
-	input = strings.TrimSpace(strings.ToLower(input))
+var ErrInvalidEmail = errors.New("invalid email address")
 
-	if input == "y" || input == "yes" {
-		fmt.Println("Installing Git with Homebrew...")
-		var outBuf, errBuf strings.Builder
-		cmd := exec.Command("brew", "install", "git")
-		cmd.Stdout = &outBuf
-		cmd.Stderr = &errBuf
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println("❌ Failed to install Git:", err)
-			if outBuf.Len() > 0 {
-				fmt.Println("--- brew output ---")
-				fmt.Print(outBuf.String())
-			}
-			if errBuf.Len() > 0 {
-				fmt.Println("--- brew error output ---")
-				fmt.Print(errBuf.String())
-			}
-		} else {
-			fmt.Println("✅ Git installed successfully.")
+func validateEmail(email string) error {
+	// Simple regex for demonstration; you can use a more robust one if needed
+	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+	if !re.MatchString(email) {
+		return fmt.Errorf("%s: %w", email, ErrInvalidEmail)
+	}
+	return nil
+}
+
+func AskToInstallGit() {
+	answer := ui.AskYesNo("Do you want to install Git? (y/n): ")
+	if !answer {
+		fmt.Println("❌ Git will not be installed.")
+		return
+	}
+
+	fmt.Println("Installing Git with Homebrew...")
+	var outBuf, errBuf strings.Builder
+	cmd := exec.Command("brew", "install", "git")
+	cmd.Stdout = &outBuf
+	cmd.Stderr = &errBuf
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("❌ Failed to install Git:", err)
+		if outBuf.Len() > 0 {
+			fmt.Println("--- brew output ---")
+			fmt.Print(outBuf.String())
+		}
+		if errBuf.Len() > 0 {
+			fmt.Println("--- brew error output ---")
+			fmt.Print(errBuf.String())
 		}
 	} else {
-		fmt.Println("❌ Git will not be installed.")
+		fmt.Println("✅ Git installed successfully.")
 	}
 }
 
 func SetupSSHKey() {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("📦 Set up a GitHub SSH key? (y/n): ")
-	confirm, _ := reader.ReadString('\n')
-	confirm = strings.TrimSpace(strings.ToLower(confirm))
-	if confirm != "y" && confirm != "yes" {
+	answer := ui.AskYesNo("📦 Set up a GitHub SSH key? (y/n): ")
+	if !answer {
 		fmt.Println("🔕 Skipping SSH key setup.")
 		return
 	}
@@ -52,9 +61,12 @@ func SetupSSHKey() {
 	fmt.Println("🔐 Setting up GitHub SSH key...")
 
 	// Get GitHub email
-	fmt.Print("✉️  Enter your GitHub email address: ")
-	email, _ := reader.ReadString('\n')
-	email = strings.TrimSpace(email)
+	email := ui.AskForInput(
+		"✉️  Enter your GitHub email address: ",
+		"example@gmail.com",
+		input.WithHelp(true),
+		input.WithValidateFunc(validateEmail),
+	)
 
 	sshKeyPath := os.Getenv("HOME") + "/.ssh/id_ed25519"
 	sshConfigPath := os.Getenv("HOME") + "/.ssh/config"
@@ -101,10 +113,19 @@ Host github.com
 
 	// Add key to agent
 	addCmd := exec.Command("ssh-add", sshKeyPath)
-	addCmd.Stderr = os.Stderr
-	addCmd.Stdout = os.Stdout
+	var addOut, addErr strings.Builder
+	addCmd.Stdout = &addOut
+	addCmd.Stderr = &addErr
 	if err := addCmd.Run(); err != nil {
 		fmt.Println("❌ Failed to add key to ssh-agent:", err)
+		if addOut.Len() > 0 {
+			fmt.Println("--- ssh-add output ---")
+			fmt.Print(addOut.String())
+		}
+		if addErr.Len() > 0 {
+			fmt.Println("--- ssh-add error output ---")
+			fmt.Print(addErr.String())
+		}
 	} else {
 		fmt.Println("🔑 SSH key added to ssh-agent.")
 	}

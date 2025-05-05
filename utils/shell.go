@@ -11,8 +11,6 @@ func GetParentShell() (string, bool) {
 	pid := os.Getppid()
 	process, err := ps.FindProcess(pid)
 
-	fmt.Printf("Go PID: %d, Parent PID: %d\n", os.Getpid(), os.Getppid())
-
 	if err != nil || process == nil {
 		fmt.Println("Could not detect parent process.")
 		return "", false
