@@ -42,7 +42,9 @@ func main() {
 				cmd.AskToInstallEditor()
 				cmd.AskToInstallNode()
 				cmd.AskToInstallCorepack()
-				cmd.AskToInstallBun()
+				cmd.AskToInstallBun(shell)
+				cmd.AskToInstallAliases(shellConfigFile)
+				cmd.AskToInstallBrowsers()
 			}
 		},
 	}

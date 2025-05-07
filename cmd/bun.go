@@ -8,11 +8,11 @@ import (
 	"github.com/tsotimus/quickforge/ui"
 )
 
-func InstallBun() {
+func InstallBun(shell string) {
 	fmt.Println("🌐 Installing Bun via Bum...")
 
 	// Set up the command: sh -c "curl -fsSL <url> | bash"
-	cmd := exec.Command("sh", "-c", "curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | bash")
+	cmd := exec.Command("sh", "-c", fmt.Sprintf("curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | %s", shell))
 
 	// Silence stdout and stderr
 	devNull, _ := os.Open(os.DevNull)
@@ -28,11 +28,11 @@ func InstallBun() {
 	fmt.Println("✅ Bun installed successfully via Bum.")
 }
 
-func AskToInstallBun() {
+func AskToInstallBun(shell string) {
 	answer := ui.AskYesNo("Do you want to install Bun?")
 	if !answer {
 		fmt.Println("🔕 Skipping Bun installation.")
 		return
 	}
-	InstallBun()
+	InstallBun(shell)
 }

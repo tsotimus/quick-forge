@@ -9,6 +9,7 @@ import (
 	"github.com/cqroot/prompt"
 	"github.com/cqroot/prompt/choose"
 	"github.com/cqroot/prompt/input"
+	"github.com/cqroot/prompt/multichoose"
 )
 
 func CheckErr(err error) {
@@ -65,6 +66,15 @@ func AskSimpleChoice(question string, choices []string, opts ...choose.Option) s
 	answer, err := prompt.New().Ask(question).Choose(choices,
 		choose.WithTheme(choose.Theme(BlueHighlightTheme)),
 		choose.WithKeyMap(choose.HorizontalKeyMap),
+	)
+	CheckErr(err)
+	return answer
+}
+
+func AskMultiChoice(question string, choices []string, opts ...multichoose.Option) []string {
+	answer, err := prompt.New().Ask(question).MultiChoose(
+		choices,
+		append([]multichoose.Option{}, opts...)...,
 	)
 	CheckErr(err)
 	return answer
