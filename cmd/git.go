@@ -26,7 +26,6 @@ func validateEmail(email string) error {
 func AskToInstallGit() {
 	answer := ui.AskYesNo("Do you want to install Git?")
 	if !answer {
-		fmt.Println("❌ Git will not be installed.")
 		return
 	}
 
@@ -54,7 +53,6 @@ func AskToInstallGit() {
 func SetupSSHKey() {
 	answer := ui.AskYesNo("Set up a GitHub SSH key?")
 	if !answer {
-		fmt.Println("🔕 Skipping SSH key setup.")
 		return
 	}
 

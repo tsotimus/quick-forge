@@ -59,7 +59,6 @@ func InstallAliases(configFile string) {
 func AskToInstallAliases(configFile string) {
 	answer := ui.AskYesNo("Do you want to setup some git aliases?")
 	if !answer {
-		fmt.Println("🔕 Skipping alias setup.")
 		return
 	}
 

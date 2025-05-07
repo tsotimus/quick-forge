@@ -30,7 +30,6 @@ func InstallCorepack() {
 func AskToInstallCorepack() {
 	answer := ui.AskYesNo("Do you want to install Corepack?")
 	if !answer {
-		fmt.Println("🔕 Skipping Corepack installation.")
 		return
 	}
 

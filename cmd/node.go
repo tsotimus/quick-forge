@@ -48,7 +48,6 @@ func InstallNode() {
 func AskToInstallNode() {
 	answer := ui.AskYesNo("📦 Do you want to install Node.js and fnm? (fast node manager)")
 	if !answer {
-		fmt.Println("🔕 Skipping Node.js installation.")
 		return
 	}
 

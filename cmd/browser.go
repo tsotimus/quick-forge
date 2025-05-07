@@ -53,7 +53,6 @@ func InstallArc() {
 func AskToInstallBrowsers() {
 	answer := ui.AskMultiChoice("Which browsers do you want to install?", []string{"Google Chrome", "Zen Browser", "Arc Browser"})
 	if len(answer) == 0 {
-		fmt.Println("🔕 Skipping browser installation.")
 		return
 	}
 

@@ -31,7 +31,6 @@ func InstallBun(shell string) {
 func AskToInstallBun(shell string) {
 	answer := ui.AskYesNo("Do you want to install Bun?")
 	if !answer {
-		fmt.Println("🔕 Skipping Bun installation.")
 		return
 	}
 	InstallBun(shell)
