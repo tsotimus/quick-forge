@@ -45,6 +45,7 @@ func main() {
 				cmd.AskToInstallBun(shell)
 				cmd.AskToInstallAliases(shellConfigFile)
 				cmd.AskToInstallBrowsers()
+				utils.Finish(shellConfigFile)
 			}
 		},
 	}

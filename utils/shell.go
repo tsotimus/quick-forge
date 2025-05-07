@@ -43,3 +43,8 @@ func RestartShell(shellConfigFile string) {
 	fmt.Println("\nNext step:")
 	fmt.Printf("  source ~/%s && quickforge\n", shellConfigFile)
 }
+
+func Finish(shellConfigFile string) {
+	fmt.Println("\nAll done! Just run this final command to finish:")
+	fmt.Printf("  source ~/%s\n", shellConfigFile)
+}

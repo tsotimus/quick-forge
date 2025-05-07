@@ -28,32 +28,30 @@ alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
 func InstallAliases(configFile string) {
 	fmt.Println("🔗 Installing aliases...")
 
-	// Expand ~ to the user's home directory
-	if configFile[:2] == "~/" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Println("❌ Failed to get home directory:", err)
-			return
-		}
-		configFile = filepath.Join(homeDir, configFile[2:])
+	// Resolve path to full ~/.<configFile>
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("❌ Failed to get home directory:", err)
+		return
 	}
+	fullPath := filepath.Join(homeDir, configFile)
 
-	// Open the file for appending
-	f, err := os.OpenFile(configFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	// Open or create the config file for appending
+	f, err := os.OpenFile(fullPath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("❌ Failed to open config file:", err)
 		return
 	}
 	defer f.Close()
 
-	// Append a newline before aliases just in case
+	// Append the aliases
 	_, err = f.WriteString("\n" + GitAliases + "\n")
 	if err != nil {
 		fmt.Println("❌ Failed to write to config file:", err)
 		return
 	}
 
-	fmt.Println("✅ Aliases successfully added to", configFile)
+	fmt.Println("✅ Aliases successfully added to", fullPath)
 }
 
 func AskToInstallAliases(configFile string) {
