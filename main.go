@@ -43,9 +43,9 @@ func main() {
 				cmd.AskToInstallNode()
 				cmd.AskToInstallCorepack()
 				cmd.AskToInstallBun(shell)
-				cmd.AskToInstallAliases(shellConfigFile)
+				shouldRestart := cmd.AskToInstallAliases(shellConfigFile)
 				cmd.AskToInstallBrowsers()
-				utils.Finish(shellConfigFile)
+				utils.Finish(shellConfigFile, shouldRestart)
 			}
 		},
 	}

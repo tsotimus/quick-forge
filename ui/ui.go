@@ -72,9 +72,10 @@ func AskSimpleChoice(question string, choices []string, opts ...choose.Option) s
 }
 
 func AskMultiChoice(question string, choices []string, opts ...multichoose.Option) []string {
+	allOpts := append(opts, multichoose.WithTheme(multichoose.ThemeDot))
 	answer, err := prompt.New().Ask(question).MultiChoose(
 		choices,
-		append([]multichoose.Option{}, opts...)...,
+		allOpts...,
 	)
 	CheckErr(err)
 	return answer

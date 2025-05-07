@@ -54,11 +54,12 @@ func InstallAliases(configFile string) {
 	fmt.Println("✅ Aliases successfully added to", fullPath)
 }
 
-func AskToInstallAliases(configFile string) {
+func AskToInstallAliases(configFile string) bool {
 	answer := ui.AskYesNo("Do you want to setup some git aliases?")
 	if !answer {
-		return
+		return false
 	}
 
 	InstallAliases(configFile)
+	return true
 }
