@@ -46,7 +46,7 @@ func InstallCursor() {
 	fmt.Println("✅ Cursor installed successfully.")
 }
 
-func InstallEditor() {
+func AskToInstallEditor() {
 	answer := ui.AskSimpleChoice("Which editor do you want to install?", []string{"VSCode", "Cursor", "None"})
 	if answer == "None" {
 		fmt.Println("Skipping editor installation.")
