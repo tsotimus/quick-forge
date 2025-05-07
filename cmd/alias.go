@@ -26,8 +26,6 @@ alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
 `
 
 func InstallAliases(configFile string) {
-	fmt.Println("🔗 Installing aliases...")
-
 	// Resolve path to full ~/.<configFile>
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -50,8 +48,6 @@ func InstallAliases(configFile string) {
 		fmt.Println("❌ Failed to write to config file:", err)
 		return
 	}
-
-	fmt.Println("✅ Aliases successfully added to", fullPath)
 }
 
 func AskToInstallAliases(configFile string) bool {

@@ -2,25 +2,24 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
 )
 
 func InstallCorepack() {
-	fmt.Println("🌐 Installing Corepack...")
+	fmt.Println("Installing Corepack...")
 
 	cmd := exec.Command("brew", "install", "corepack")
 
-	// Silence both stdout and stderr
-	devNull, _ := os.Open(os.DevNull)
-	defer devNull.Close()
-	cmd.Stdout = devNull
-	cmd.Stderr = devNull
+	// Capture both stdout and stderr
+	output, err := cmd.CombinedOutput()
 
-	if err := cmd.Run(); err != nil {
+	if err != nil {
 		fmt.Println("❌ Failed to install Corepack:", err)
+		fmt.Println("--- Command output ---")
+		fmt.Println(string(output))
+		fmt.Println("----------------------")
 		return
 	}
 

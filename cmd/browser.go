@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io"
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
@@ -11,11 +10,15 @@ import (
 func InstallChrome() {
 	fmt.Println("🔍 Installing Google Chrome...")
 	cmd := exec.Command("brew", "install", "--cask", "google-chrome")
-	cmd.Stdout = io.Discard
-	cmd.Stderr = io.Discard
 
-	if err := cmd.Run(); err != nil {
+	// Capture both stdout and stderr
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
 		fmt.Println("❌ Failed to install Google Chrome:", err)
+		fmt.Println("--- Command output ---")
+		fmt.Println(string(output))
+		fmt.Println("----------------------")
 		return
 	}
 
@@ -25,11 +28,15 @@ func InstallChrome() {
 func InstallZen() {
 	fmt.Println("🔍 Installing Zen Browser...")
 	cmd := exec.Command("brew", "install", "--cask", "zen-browser")
-	cmd.Stdout = io.Discard
-	cmd.Stderr = io.Discard
 
-	if err := cmd.Run(); err != nil {
+	// Capture both stdout and stderr
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
 		fmt.Println("❌ Failed to install Zen Browser:", err)
+		fmt.Println("--- Command output ---")
+		fmt.Println(string(output))
+		fmt.Println("----------------------")
 		return
 	}
 
@@ -39,11 +46,15 @@ func InstallZen() {
 func InstallArc() {
 	fmt.Println("🔍 Installing Arc Browser...")
 	cmd := exec.Command("brew", "install", "--cask", "arc-browser")
-	cmd.Stdout = io.Discard
-	cmd.Stderr = io.Discard
 
-	if err := cmd.Run(); err != nil {
+	// Capture both stdout and stderr
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
 		fmt.Println("❌ Failed to install Arc Browser:", err)
+		fmt.Println("--- Command output ---")
+		fmt.Println(string(output))
+		fmt.Println("----------------------")
 		return
 	}
 
