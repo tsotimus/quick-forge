@@ -45,7 +45,9 @@ func main() {
 				cmd.AskToInstallBun(shell)
 				shouldRestart := cmd.AskToInstallAliases(shellConfigFile)
 				cmd.AskToInstallBrowsers()
+				cmd.AskToInstallWrap()
 				utils.Finish(shellConfigFile, shouldRestart)
+
 			}
 		},
 	}

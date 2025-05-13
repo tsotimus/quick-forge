@@ -50,13 +50,18 @@ alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
 
 1. Either `git clone` or just download as a zip.
 2. Run `chmod +x setup.sh`
-3. Run `sh setup.sh` 
+3. Run `sh setup.sh`
 
+### Go Migration Todo
 
+- Fix Node install via Fnm
+- Test via CI CD
+- Install Bash script
 
 #### Future Enhancements
 
 Future Enhancements (optional section)
+
 - Add support for other development ecosystems (Python, Go, etc.).
 - Integration with Docker or Kubernetes for containerized setups.
-- Optional database installation (PostgreSQL, MongoDB, etc.).
+- Optional database installation (PostgreSQL, MongoDB, etc)
