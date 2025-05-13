@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallChrome() {
@@ -62,12 +63,21 @@ func InstallArc() {
 }
 
 func AskToInstallBrowsers() {
-	answer := ui.AskMultiChoice("Which browsers do you want to install?", []string{"Google Chrome", "Zen Browser", "Arc Browser"})
-	if len(answer) == 0 {
+	var browsersToInstall []string
+
+	if !utils.NonInteractive {
+		browsersToInstall = ui.AskMultiChoice("Which browsers do you want to install?", []string{"Google Chrome", "Zen Browser", "Arc Browser"})
+	} else {
+		fmt.Println("Non-interactive mode: Defaulting to install Google Chrome.")
+		browsersToInstall = []string{"Google Chrome"}
+	}
+
+	if len(browsersToInstall) == 0 {
+		fmt.Println("Skipping browser installation.")
 		return
 	}
 
-	for _, browser := range answer {
+	for _, browser := range browsersToInstall {
 		switch browser {
 		case "Google Chrome":
 			InstallChrome()

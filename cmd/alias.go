@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 const GitAliases = `
@@ -51,8 +52,18 @@ func InstallAliases(configFile string) {
 }
 
 func AskToInstallAliases(configFile string) bool {
-	answer := ui.AskYesNo("Do you want to setup some git aliases?")
-	if !answer {
+	installAliases := true // Default to true for non-interactive mode or if user says yes
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("Do you want to setup some git aliases?")
+		if !answer {
+			installAliases = false
+		}
+	} else {
+		fmt.Println("Non-interactive mode: Setting up Git aliases by default.")
+	}
+
+	if !installAliases {
+		fmt.Println("Skipping Git alias setup.")
 		return false
 	}
 

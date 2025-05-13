@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallWrap() {
@@ -23,8 +24,19 @@ func InstallWrap() {
 }
 
 func AskToInstallWrap() {
-	answer := ui.AskYesNo("Do you want to install wrap?")
-	if answer {
-		InstallWrap()
+	installWrap := true
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("Do you want to install wrap?")
+		if !answer {
+			installWrap = false
+		}
+	} else {
+		fmt.Println("Non-interactive mode: Installing Warp by default.")
 	}
+
+	if !installWrap {
+		fmt.Println("Skipping Warp installation.")
+		return
+	}
+	InstallWrap()
 }

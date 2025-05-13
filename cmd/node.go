@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallFnm() {
@@ -52,8 +53,18 @@ func InstallNode() {
 }
 
 func AskToInstallNode() {
-	answer := ui.AskYesNo("📦 Do you want to install Node.js and fnm? (fast node manager)")
-	if !answer {
+	installNode := true // Default to true for non-interactive mode or if user says yes
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("📦 Do you want to install Node.js and fnm? (fast node manager)")
+		if !answer {
+			installNode = false
+		}
+	} else {
+		fmt.Println("Non-interactive mode: Installing Node.js and fnm by default.")
+	}
+
+	if !installNode {
+		fmt.Println("Skipping Node.js and fnm installation.")
 		return
 	}
 

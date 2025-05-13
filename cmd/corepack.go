@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallCorepack() {
@@ -27,8 +28,18 @@ func InstallCorepack() {
 }
 
 func AskToInstallCorepack() {
-	answer := ui.AskYesNo("Do you want to install Corepack?")
-	if !answer {
+	installCorepack := true
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("Do you want to install Corepack?")
+		if !answer {
+			installCorepack = false
+		}
+	} else {
+		fmt.Println("Non-interactive mode: Installing Corepack by default.")
+	}
+
+	if !installCorepack {
+		fmt.Println("Skipping Corepack installation.")
 		return
 	}
 

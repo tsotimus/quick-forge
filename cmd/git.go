@@ -10,6 +10,7 @@ import (
 
 	"github.com/cqroot/prompt/input"
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 var ErrInvalidEmail = errors.New("invalid email address")
@@ -24,8 +25,16 @@ func validateEmail(email string) error {
 }
 
 func AskToInstallGit() {
-	answer := ui.AskYesNo("Do you want to install Git?")
-	if !answer {
+	installGit := true // Default to true for non-interactive mode or if user says yes
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("Do you want to install Git?")
+		if !answer {
+			installGit = false
+		}
+	}
+
+	if !installGit {
+		fmt.Println("Skipping Git installation.")
 		return
 	}
 
@@ -51,19 +60,43 @@ func AskToInstallGit() {
 }
 
 func SetupSSHKey() {
-	answer := ui.AskYesNo("Set up a GitHub SSH key?")
-	if !answer {
+	setupKey := true // Default to true for non-interactive mode or if user says yes
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("Set up a GitHub SSH key?")
+		if !answer {
+			setupKey = false
+		}
+	}
+
+	if !setupKey {
 		return
 	}
 
-	fmt.Println("🔐 Setting up GitHub SSH key...")
-
-	email := ui.AskForInput(
-		"✉️  Enter your GitHub email address: ",
-		"example@gmail.com",
-		input.WithHelp(true),
-		input.WithValidateFunc(validateEmail),
-	)
+	var email string
+	if !utils.NonInteractive {
+		email = ui.AskForInput(
+			"✉️  Enter your GitHub email address: ",
+			"example@gmail.com",
+			input.WithHelp(true),
+			input.WithValidateFunc(validateEmail),
+		)
+	} else {
+		// Attempt to get email from git config in non-interactive mode
+		cmdEmail := exec.Command("git", "config", "--global", "user.email")
+		emailBytes, err := cmdEmail.Output()
+		if err == nil && len(strings.TrimSpace(string(emailBytes))) > 0 {
+			email = strings.TrimSpace(string(emailBytes))
+			fmt.Printf("✉️ Using Git config email: %s\n", email)
+		} else {
+			// Fallback if git email not found or if there was an error reading it
+			// For non-interactive, we could skip, or use a default, or require a flag.
+			// For now, let's inform and skip this specific step if email is critical and not found.
+			fmt.Println("⚠️ Git user email not found in global config. Cannot proceed with SSH key generation without an email.")
+			fmt.Println("You can set it with: git config --global user.email \"your_email@example.com\"")
+			fmt.Println("Skipping GitHub SSH key setup.")
+			return
+		}
+	}
 
 	home := os.Getenv("HOME")
 	sshKeyPath := home + "/.ssh/id_ed25519"
@@ -78,7 +111,6 @@ func SetupSSHKey() {
 		fmt.Println("❌ Failed to generate SSH key:", err)
 		return
 	}
-	fmt.Println("✅ SSH key generated.")
 
 	// Start SSH agent if not already running
 	sshAuthSock := os.Getenv("SSH_AUTH_SOCK")

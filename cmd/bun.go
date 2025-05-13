@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallBun(shell string) {
@@ -29,8 +30,18 @@ func InstallBun(shell string) {
 }
 
 func AskToInstallBun(shell string) {
-	answer := ui.AskYesNo("Do you want to install Bun?")
-	if !answer {
+	installBun := true // Default to true for non-interactive mode or if user says yes
+	if !utils.NonInteractive {
+		answer := ui.AskYesNo("Do you want to install Bun?")
+		if !answer {
+			installBun = false
+		}
+	} else {
+		fmt.Println("Non-interactive mode: Installing Bun by default.")
+	}
+
+	if !installBun {
+		fmt.Println("Skipping Bun installation.")
 		return
 	}
 	InstallBun(shell)

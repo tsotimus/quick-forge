@@ -13,7 +13,7 @@ import (
 func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "quickforge",
-		Short: "QuickForge sets up your Mac dev environment",
+		Short: "QuickForge sets up your Typescript dev environment",
 		Run: func(_ *cobra.Command, args []string) {
 			lightning := lipgloss.NewStyle().Foreground(lipgloss.Color("226")).Render("⚡")
 			hammer := lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Render("🔨")
@@ -47,10 +47,11 @@ func main() {
 				cmd.AskToInstallBrowsers()
 				cmd.AskToInstallWrap()
 				utils.Finish(shellConfigFile, shouldRestart)
-
 			}
 		},
 	}
+
+	rootCmd.PersistentFlags().BoolVarP(&utils.NonInteractive, "non-interactive", "y", false, "Enable non-interactive mode (accepts all defaults)")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("Error:", err)

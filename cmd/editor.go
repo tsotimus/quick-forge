@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallVSCode() {
@@ -46,14 +47,24 @@ func InstallCursor() {
 }
 
 func AskToInstallEditor() {
-	answer := ui.AskSimpleChoice("Which editor do you want to install?", []string{"VSCode", "Cursor", "None"})
-	if answer == "None" {
+	var editorToInstall string
+
+	if !utils.NonInteractive {
+		chosenEditor := ui.AskSimpleChoice("Which editor do you want to install?", []string{"VSCode", "Cursor", "None"})
+		editorToInstall = chosenEditor
+	} else {
+		fmt.Println("Non-interactive mode: Defaulting to VSCode for editor installation.")
+		editorToInstall = "VSCode"
+	}
+
+	if editorToInstall == "None" {
+		fmt.Println("Skipping editor installation.")
 		return
 	}
 
-	if answer == "VSCode" {
+	if editorToInstall == "VSCode" {
 		InstallVSCode()
-	} else if answer == "Cursor" {
+	} else if editorToInstall == "Cursor" {
 		InstallCursor()
 	}
 }
