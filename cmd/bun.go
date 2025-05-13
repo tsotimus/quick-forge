@@ -10,10 +10,17 @@ import (
 )
 
 func InstallBun(shell string) {
+	commandStr := fmt.Sprintf("curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | %s", shell)
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Bun via Bum with command: sh -c \"%s\"\n", commandStr)
+		fmt.Println("[Dry Run] ✅ Bun would be installed successfully via Bum.")
+		return
+	}
+
 	fmt.Println("🌐 Installing Bun via Bum...")
 
 	// Set up the command: sh -c "curl -fsSL <url> | bash"
-	cmd := exec.Command("sh", "-c", fmt.Sprintf("curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | %s", shell))
+	cmd := exec.Command("sh", "-c", commandStr)
 
 	// Silence stdout and stderr
 	devNull, _ := os.Open(os.DevNull)

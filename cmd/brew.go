@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/tsotimus/quickforge/utils"
 )
 
 func CheckBrew() bool {
@@ -19,8 +21,29 @@ func CheckBrew() bool {
 }
 
 func InstallBrew(shellConfigFile string) {
-	fmt.Println("🛠️ Installing Homebrew...")
+	// Define command strings for dry run output
+	brewInstallCmdString := "/bin/bash -c \"curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>&1\"" // Note: actual command redirects output
 
+	home, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("❌ Could not determine home directory:", err)
+		return
+	}
+	rcFile := filepath.Join(home, shellConfigFile)
+	// IMPORTANT: The path to brew shellenv might differ (e.g., /opt/homebrew/bin/brew for Apple Silicon)
+	// This is a placeholder. A more robust solution would find brew's path after installation.
+	shellenvLine := `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"`
+	appendShellCmdString := fmt.Sprintf(`echo >> %s && echo '%s' >> %s`, rcFile, shellenvLine, rcFile)
+	evalShellCmdString := shellenvLine
+
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Homebrew with command: %s\n", brewInstallCmdString)
+		fmt.Println("[Dry Run] ✅ Homebrew installation and setup would be complete.")
+		return
+	}
+
+	fmt.Println("🛠️ Installing Homebrew...")
+	// Actual Homebrew installation
 	cmd := exec.Command("/bin/bash", "-c", "curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>&1")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("❌ Failed to install Homebrew:", err)
@@ -29,18 +52,8 @@ func InstallBrew(shellConfigFile string) {
 
 	fmt.Println("✅ Homebrew installed. Updating shell config...")
 
-	// Step 2: Add brew shellenv to ~/.zshrc or ~/.bashrc
-	home, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Println("❌ Could not determine home directory:", err)
-		return
-	}
-
-	// Use .zshrc instead of .bashrc
-	rcFile := filepath.Join(home, shellConfigFile)
-	shellenvLine := `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"`
-
-	appendCmd := exec.Command("sh", "-c", fmt.Sprintf(`echo >> %s && echo '%s' >> %s`, rcFile, shellenvLine, rcFile))
+	// Add brew shellenv to rcFile
+	appendCmd := exec.Command("sh", "-c", appendShellCmdString)
 	appendCmd.Stdout = os.Stdout
 	appendCmd.Stderr = os.Stderr
 	if err := appendCmd.Run(); err != nil {
@@ -48,8 +61,8 @@ func InstallBrew(shellConfigFile string) {
 		return
 	}
 
-	// Step 3: Export brew path for current session
-	evalCmd := exec.Command("bash", "-c", shellenvLine)
+	// Export brew path for current session
+	evalCmd := exec.Command("bash", "-c", evalShellCmdString) // Use evalShellCmdString here
 	evalCmd.Stdout = os.Stdout
 	evalCmd.Stderr = os.Stderr
 	if err := evalCmd.Run(); err != nil {

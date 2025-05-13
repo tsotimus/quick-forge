@@ -3,15 +3,21 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/tsotimus/quickforge/ui"
 	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallVSCode() {
+	cmdToRun := []string{"brew", "install", "--cask", "visual-studio-code"}
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install VSCode with command: %s\n", strings.Join(cmdToRun, " "))
+		fmt.Println("[Dry Run] ✅ Visual Studio Code would be installed successfully.")
+		return
+	}
 	fmt.Println("Installing VSCode...")
-
-	cmd := exec.Command("brew", "install", "--cask", "visual-studio-code")
+	cmd := exec.Command(cmdToRun[0], cmdToRun[1:]...)
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()
@@ -28,9 +34,14 @@ func InstallVSCode() {
 }
 
 func InstallCursor() {
+	cmdToRun := []string{"brew", "install", "--cask", "cursor"}
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Cursor with command: %s\n", strings.Join(cmdToRun, " "))
+		fmt.Println("[Dry Run] ✅ Cursor would be installed successfully.")
+		return
+	}
 	fmt.Println("Installing Cursor...")
-
-	cmd := exec.Command("brew", "install", "--cask", "cursor")
+	cmd := exec.Command(cmdToRun[0], cmdToRun[1:]...)
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()

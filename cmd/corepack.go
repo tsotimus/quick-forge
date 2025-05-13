@@ -3,15 +3,22 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/tsotimus/quickforge/ui"
 	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallCorepack() {
-	fmt.Println("Installing Corepack...")
+	cmdToRun := []string{"brew", "install", "corepack"}
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Corepack with command: %s\n", strings.Join(cmdToRun, " "))
+		fmt.Println("[Dry Run] ✅ Corepack would be installed successfully.")
+		return
+	}
 
-	cmd := exec.Command("brew", "install", "corepack")
+	fmt.Println("Installing Corepack...")
+	cmd := exec.Command(cmdToRun[0], cmdToRun[1:]...)
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()

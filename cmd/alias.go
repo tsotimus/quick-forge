@@ -27,7 +27,6 @@ alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
 `
 
 func InstallAliases(configFile string) {
-	// Resolve path to full ~/.<configFile>
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("❌ Failed to get home directory:", err)
@@ -35,7 +34,12 @@ func InstallAliases(configFile string) {
 	}
 	fullPath := filepath.Join(homeDir, configFile)
 
-	// Open or create the config file for appending
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would append the following aliases to %s:\n%s\n", fullPath, GitAliases)
+		fmt.Println("[Dry Run] ✅ Aliases would be written to config file.")
+		return
+	}
+
 	f, err := os.OpenFile(fullPath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("❌ Failed to open config file:", err)

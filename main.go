@@ -52,6 +52,7 @@ func main() {
 	}
 
 	rootCmd.PersistentFlags().BoolVarP(&utils.NonInteractive, "non-interactive", "y", false, "Enable non-interactive mode (accepts all defaults)")
+	rootCmd.PersistentFlags().BoolVarP(&utils.DryRun, "dry-run", "d", false, "Simulate changes without executing them")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("Error:", err)

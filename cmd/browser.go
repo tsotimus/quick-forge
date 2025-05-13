@@ -3,14 +3,21 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/tsotimus/quickforge/ui"
 	"github.com/tsotimus/quickforge/utils"
 )
 
 func InstallChrome() {
+	cmdToRun := []string{"brew", "install", "--cask", "google-chrome"}
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Google Chrome with command: %s\n", strings.Join(cmdToRun, " "))
+		fmt.Println("[Dry Run] ✅ Google Chrome would be installed successfully.")
+		return
+	}
 	fmt.Println("🔍 Installing Google Chrome...")
-	cmd := exec.Command("brew", "install", "--cask", "google-chrome")
+	cmd := exec.Command(cmdToRun[0], cmdToRun[1:]...)
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()
@@ -27,8 +34,14 @@ func InstallChrome() {
 }
 
 func InstallZen() {
+	cmdToRun := []string{"brew", "install", "--cask", "zen-browser"}
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Zen Browser with command: %s\n", strings.Join(cmdToRun, " "))
+		fmt.Println("[Dry Run] ✅ Zen Browser would be installed successfully.")
+		return
+	}
 	fmt.Println("🔍 Installing Zen Browser...")
-	cmd := exec.Command("brew", "install", "--cask", "zen-browser")
+	cmd := exec.Command(cmdToRun[0], cmdToRun[1:]...)
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()
@@ -45,8 +58,14 @@ func InstallZen() {
 }
 
 func InstallArc() {
+	cmdToRun := []string{"brew", "install", "--cask", "arc-browser"}
+	if utils.DryRun {
+		fmt.Printf("[Dry Run] Would install Arc Browser with command: %s\n", strings.Join(cmdToRun, " "))
+		fmt.Println("[Dry Run] ✅ Arc Browser would be installed successfully.")
+		return
+	}
 	fmt.Println("🔍 Installing Arc Browser...")
-	cmd := exec.Command("brew", "install", "--cask", "arc-browser")
+	cmd := exec.Command(cmdToRun[0], cmdToRun[1:]...)
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()
