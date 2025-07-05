@@ -48,7 +48,7 @@ esac
 print_status "Detected macOS with $ARCH architecture"
 
 # Set variables
-REPO="tsotimus/quickforge"
+REPO="tsotimus/quick-forge"
 BINARY_NAME="quickforge-darwin-$ARCH"
 INSTALL_DIR="/usr/local/bin"
 INSTALL_PATH="$INSTALL_DIR/quickforge"
