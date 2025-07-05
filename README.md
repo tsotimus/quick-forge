@@ -2,12 +2,48 @@
 
 Quickly set up a new MacBook with everything you need to develop in the JavaScript/TypeScript ecosystem.
 
+## Installation
 
+### Option 1: One-line install (Recommended)
+```bash
+curl -fsSL https://raw.githubusercontent.com/tsotimus/quickforge/main/install.sh | bash
+```
 
+### Option 2: Download binary manually
+1. Go to the [releases page](https://github.com/tsotimus/quickforge/releases)
+2. Download the appropriate binary for your system
+3. Make it executable: `chmod +x quickforge-darwin-arm64`
+4. Move to your PATH: `sudo mv quickforge-darwin-arm64 /usr/local/bin/quickforge`
+
+### Option 3: Build from source
+```bash
+git clone https://github.com/tsotimus/quickforge.git
+cd quickforge
+make build
+./quickforge
+```
+
+### Option 4: Go install (if you have Go installed)
+```bash
+go install github.com/tsotimus/quickforge@latest
+```
+
+## Usage
+
+```bash
+# Interactive mode
+quickforge
+
+# Non-interactive mode (accepts all defaults)
+quickforge -y
+
+# Dry run (see what would be installed)
+quickforge -d
+```
 
 ## Key Features
 - One script to install and configure your development environment.
-- Modular installs: choose what you need and skip what you don’t.
+- Modular installs: choose what you need and skip what you don't.
 - Pre-configured zsh for enhanced productivity.
 
 ![Quick Forge Terminal Screenshot](./screenshot.png)

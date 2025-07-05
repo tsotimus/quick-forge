@@ -10,10 +10,13 @@ import (
 	"github.com/tsotimus/quickforge/utils"
 )
 
+var version = "dev" // This will be set by build flags in CI
+
 func main() {
 	var rootCmd = &cobra.Command{
-		Use:   "quickforge",
-		Short: "QuickForge sets up your Typescript dev environment",
+		Use:     "quickforge",
+		Short:   "QuickForge sets up your Typescript dev environment",
+		Version: version,
 		Run: func(_ *cobra.Command, args []string) {
 			lightning := lipgloss.NewStyle().Foreground(lipgloss.Color("226")).Render("⚡")
 			hammer := lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Render("🔨")
