@@ -6,18 +6,18 @@ Quickly set up a new MacBook with everything you need to develop in the JavaScri
 
 ### Option 1: One-line install (Recommended)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tsotimus/quickforge/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RockiRider/quick-forge/main/install.sh | bash
 ```
 
 ### Option 2: Download binary manually
-1. Go to the [releases page](https://github.com/tsotimus/quickforge/releases)
+1. Go to the [releases page](https://github.com/RockiRider/quick-forge/releases)
 2. Download the appropriate binary for your system
 3. Make it executable: `chmod +x quickforge-darwin-arm64`
 4. Move to your PATH: `sudo mv quickforge-darwin-arm64 /usr/local/bin/quickforge`
 
 ### Option 3: Build from source
 ```bash
-git clone https://github.com/tsotimus/quickforge.git
+git clone https://github.com/RockiRider/quick-forge.git
 cd quickforge
 make build
 ./quickforge
@@ -25,7 +25,7 @@ make build
 
 ### Option 4: Go install (if you have Go installed)
 ```bash
-go install github.com/tsotimus/quickforge@latest
+go install github.com/RockiRider/quick-forge@latest
 ```
 
 ## Usage

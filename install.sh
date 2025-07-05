@@ -1,6 +1,6 @@
 #!/bin/bash
 # QuickForge Installation Script
-# Usage: curl -fsSL https://raw.githubusercontent.com/tsotimus/quickforge/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/RockiRider/quick-forge/main/install.sh | bash
 
 set -e
 
