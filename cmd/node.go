@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
-	"strings"
 
 	"github.com/tsotimus/quickforge/ui"
 	"github.com/tsotimus/quickforge/utils"
@@ -13,7 +12,6 @@ func InstallFnm() {
 	fnmInstallCmdStr := "sh -c \"curl -fsSL https://fnm.vercel.app/install | bash\""
 	if utils.DryRun {
 		fmt.Printf("[Dry Run] Would install fnm with command: %s\n", fnmInstallCmdStr)
-		// We can't easily simulate the output of the script for dry run.
 		fmt.Println("[Dry Run] ✅ fnm installation script would be executed.")
 		return
 	}
@@ -30,20 +28,26 @@ func InstallFnm() {
 		fmt.Println("----------------------")
 		return
 	}
+
+	fmt.Println("✅ fnm installed successfully")
 }
 
 func InstallNode() {
-	nodeInstallCmdParts := []string{"fnm", "install", "22"}
-	nodeUseCmdParts := []string{"fnm", "use", "22"}
 	if utils.DryRun {
-		fmt.Printf("[Dry Run] Would install Node.js v22 via fnm with command: %s\n", strings.Join(nodeInstallCmdParts, " "))
-		fmt.Printf("[Dry Run] Would activate Node.js v22 with command: %s\n", strings.Join(nodeUseCmdParts, " "))
+		fmt.Println("[Dry Run] Would install Node.js v22 via fnm with eval environment setup")
+		fmt.Println("[Dry Run] Would run: bash -c \"eval $(~/.local/share/fnm/fnm env) && fnm install 22\"")
+		fmt.Println("[Dry Run] Would run: bash -c \"eval $(~/.local/share/fnm/fnm env) && fnm use 22\"")
 		fmt.Println("[Dry Run] ✅ Node.js v22 would be installed and activated via fnm.")
 		return
 	}
+
 	fmt.Println("📦 Installing Node.js v22 via fnm...")
-	cmdInstall := exec.Command(nodeInstallCmdParts[0], nodeInstallCmdParts[1:]...)
-	outputInstall, errInstall := cmdInstall.CombinedOutput()
+
+	// Use fnm's eval command to set up environment and install Node
+	installCmd := "bash -c \"eval $(~/.local/share/fnm/fnm env) && fnm install 22\""
+	cmd := exec.Command("sh", "-c", installCmd)
+	outputInstall, errInstall := cmd.CombinedOutput()
+
 	if errInstall != nil {
 		fmt.Println("❌ Failed to install Node.js v22:", errInstall)
 		fmt.Println("--- Command output ---")
@@ -52,8 +56,11 @@ func InstallNode() {
 		return
 	}
 
-	cmdUse := exec.Command(nodeUseCmdParts[0], nodeUseCmdParts[1:]...)
+	// Use fnm's eval command to set up environment and activate Node
+	useCmd := "bash -c \"eval $(~/.local/share/fnm/fnm env) && fnm use 22\""
+	cmdUse := exec.Command("sh", "-c", useCmd)
 	outputUse, errUse := cmdUse.CombinedOutput()
+
 	if errUse != nil {
 		fmt.Println("⚠️ Node installed, but couldn't activate version 22:", errUse)
 		fmt.Println("--- Command output ---")
@@ -61,6 +68,7 @@ func InstallNode() {
 		fmt.Println("----------------------")
 		return
 	}
+
 	fmt.Println("✅ Node.js v22 installed and activated via fnm.")
 }
 

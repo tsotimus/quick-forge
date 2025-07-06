@@ -18,6 +18,7 @@ alias gaa='git add --all'         # Stage all changes (tracked and untracked)
 alias gc='git commit'              # Commit staged changes
 alias gap='git add --patch'       # Interactive staging of changes (hunks)
 alias gp='git push'               # Push commits to the remote
+alias gpl='git pull'              # Pull the latest changes from the remote
 alias gl='git log'                # Show commit history
 alias gb='git branch'             # List or manage branches
 alias gco='git checkout'          # Switch branches or restore files
