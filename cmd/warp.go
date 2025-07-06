@@ -10,7 +10,7 @@ import (
 )
 
 func InstallWrap() {
-	cmdToRun := []string{"brew", "install", "wrap"}
+	cmdToRun := []string{"brew", "install", "--cask", "warp"}
 	if utils.DryRun {
 		fmt.Printf("[Dry Run] Would install wrap with command: %s\n", strings.Join(cmdToRun, " "))
 		fmt.Println("[Dry Run] ✅ wrap would be installed successfully.") // Assuming success for dry run message
