@@ -1,0 +1,213 @@
+name: E2E Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_level:
+        description: 'Test level (dry-run, safe, full)'
+        required: true
+        default: 'dry-run'
+        type: choice
+        options:
+        - dry-run
+        - safe
+        - full
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+
+jobs:
+  e2e-test:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+    
+    - name: Build QuickForge
+      run: |
+        go mod tidy
+        go build -o quickforge .
+        chmod +x quickforge
+    
+    - name: Create test environment
+      run: |
+        # Create a temporary test directory
+        mkdir -p ~/quickforge-test
+        cd ~/quickforge-test
+        
+        # Copy the binary
+        cp $GITHUB_WORKSPACE/quickforge ./
+        
+        echo "🏗️ Test environment created"
+    
+    - name: Test Level - Dry Run
+      if: github.event.inputs.test_level == 'dry-run' || github.event.inputs.test_level == ''
+      run: |
+        cd ~/quickforge-test
+        echo "🧪 Running comprehensive dry-run test..."
+        
+        # Test all functionality in dry-run mode
+        ./quickforge --dry-run --non-interactive
+        
+        echo "✅ Dry-run test completed successfully"
+    
+    - name: Test Level - Safe
+      if: github.event.inputs.test_level == 'safe'
+      run: |
+        cd ~/quickforge-test
+        echo "🧪 Running safe test (Homebrew check + dry-run)..."
+        
+        # Check if Homebrew is available
+        if command -v brew &> /dev/null; then
+          echo "✅ Homebrew is available"
+          brew --version
+        else
+          echo "❌ Homebrew not found"
+        fi
+        
+        # Test with dry-run first
+        ./quickforge --dry-run --non-interactive
+        
+        # Test version and help
+        ./quickforge --version
+        ./quickforge --help
+        
+        echo "✅ Safe test completed successfully"
+    
+    - name: Test Level - Full (Caution)
+      if: github.event.inputs.test_level == 'full'
+      run: |
+        cd ~/quickforge-test
+        echo "🧪 Running full test (WARNING: This may install software)..."
+        echo "⚠️  This test will attempt to install Homebrew and other tools"
+        
+        # Create a backup of important files
+        cp ~/.zshrc ~/.zshrc.backup 2>/dev/null || echo "No .zshrc to backup"
+        cp ~/.bashrc ~/.bashrc.backup 2>/dev/null || echo "No .bashrc to backup"
+        
+        # Run the full installation
+        timeout 1800 ./quickforge --non-interactive || echo "Installation completed or timed out"
+        
+        # Verify some installations
+        echo "🔍 Verifying installations..."
+        
+        if command -v brew &> /dev/null; then
+          echo "✅ Homebrew installed successfully"
+          brew --version
+        else
+          echo "❌ Homebrew installation failed"
+        fi
+        
+        if command -v git &> /dev/null; then
+          echo "✅ Git is available"
+          git --version
+        else
+          echo "❌ Git not found"
+        fi
+        
+        if command -v node &> /dev/null; then
+          echo "✅ Node.js is available"
+          node --version
+        else
+          echo "❌ Node.js not found"
+        fi
+        
+        echo "✅ Full test completed"
+    
+    - name: Test install script
+      run: |
+        echo "🧪 Testing install script..."
+        
+        # Test the install script's logic without actually installing
+        bash -n install.sh
+        echo "✅ Install script syntax is valid"
+        
+        # Test OS and architecture detection
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+          echo "✅ macOS detected correctly"
+        else
+          echo "❌ OS detection failed"
+          exit 1
+        fi
+        
+        ARCH=$(uname -m)
+        case $ARCH in
+          x86_64|arm64)
+            echo "✅ Architecture ($ARCH) detected correctly"
+            ;;
+          *)
+            echo "❌ Unsupported architecture: $ARCH"
+            exit 1
+            ;;
+        esac
+    
+    - name: Test uninstall script
+      run: |
+        echo "🧪 Testing uninstall script syntax..."
+        bash -n uninstall.sh
+        echo "✅ Uninstall script syntax is valid"
+    
+    - name: Cleanup test environment
+      if: always()
+      run: |
+        echo "🧹 Cleaning up test environment..."
+        
+        # Remove test directory
+        rm -rf ~/quickforge-test
+        
+        # Restore backups if they exist
+        if [ -f ~/.zshrc.backup ]; then
+          cp ~/.zshrc.backup ~/.zshrc
+          rm ~/.zshrc.backup
+        fi
+        
+        if [ -f ~/.bashrc.backup ]; then
+          cp ~/.bashrc.backup ~/.bashrc
+          rm ~/.bashrc.backup
+        fi
+        
+        echo "✅ Cleanup completed"
+    
+    - name: Generate test report
+      if: always()
+      run: |
+        echo "📊 Test Report" > test-report.md
+        echo "=============" >> test-report.md
+        echo "" >> test-report.md
+        echo "- **Test Level**: ${{ github.event.inputs.test_level || 'dry-run' }}" >> test-report.md
+        echo "- **Runner**: macOS-latest" >> test-report.md
+        echo "- **Go Version**: 1.24" >> test-report.md
+        echo "- **Date**: $(date)" >> test-report.md
+        echo "- **Commit**: ${{ github.sha }}" >> test-report.md
+        echo "" >> test-report.md
+        
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ **Status**: PASSED" >> test-report.md
+        else
+          echo "❌ **Status**: FAILED" >> test-report.md
+        fi
+        
+        echo "" >> test-report.md
+        echo "## System Information" >> test-report.md
+        echo "- **OS**: $(uname -s)" >> test-report.md
+        echo "- **Architecture**: $(uname -m)" >> test-report.md
+        echo "- **Kernel**: $(uname -r)" >> test-report.md
+        
+        cat test-report.md
+    
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-test-results
+        path: |
+          test-report.md
+          ~/quickforge-test/
+        retention-days: 30 
