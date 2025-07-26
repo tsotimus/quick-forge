@@ -27,12 +27,12 @@ quickforge -d
 
 - Installs Homebrew, the macOS package manager.
 - Installs Git and sets up an SSH key for GitHub.
-- Installs Visual Studio Code (VSCode).
+- Installs Visual Studio Code (VSCode), Cursor, or Zed.
 - Installs Node.js (via Fnm)
 - Installs Bun (via Bum)
 - Installs pnpm (via Corepack)
 - Installs Warp, the AI Terminal.
-- Lets you choose between installing Zen Browser or Arc Browser.
+- Lets you choose between installing Zen Browser, Chrome or Arc Browser.
 
 ### Git Aliases
 
@@ -53,43 +53,6 @@ alias gcm='git commit -m'          # Commit with a message inline
 alias gundo='git reset --soft HEAD~1' # Undo the last commit (soft reset)
 ```
 
-## Testing
+## Releases
 
-QuickForge is designed specifically for macOS and uses Homebrew for installations. Testing approaches:
-
-### GitHub Actions (Recommended)
-```bash
-# Trigger basic tests on macOS runners
-gh workflow run test.yml
-
-# Trigger comprehensive E2E tests (manual)
-gh workflow run e2e-test.yml -f test_level=dry-run
-gh workflow run e2e-test.yml -f test_level=safe
-gh workflow run e2e-test.yml -f test_level=full  # Caution: installs software
-```
-
-### Local Testing
-```bash
-# Safe dry-run testing (no installations)
-make test-dry-run
-
-# Local testing (may install software)
-make test-local
-
-# Unit tests only
-make test
-```
-
-### Docker Testing (Limited)
-```bash
-# Docker testing has limitations - see test.sh for details
-make test-docker
-```
-
-**Note**: Docker testing shows expected failures for macOS-specific tools like Chrome since Docker containers run Linux.
-
-#### Future Enhancements
-
-- Add support for other development ecosystems (Python, Go, etc.).
-- Integration with Docker or Kubernetes for containerized setups.
-- Optional database installation (PostgreSQL, MongoDB, etc)
+This is handled by the GitHub Actions workflow.
