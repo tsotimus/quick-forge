@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/tsotimus/quickforge/ui"
@@ -88,6 +89,27 @@ func AskToInstallNode() {
 		return
 	}
 
+	// If we're resuming from Node.js step, fnm is already installed
+	if utils.ResumeFromNode {
+		InstallNode()
+		return
+	}
+
+	// Normal flow: install fnm first, then exit for shell restart
 	InstallFnm()
-	InstallNode()
+
+	// Get shell config for restart instruction
+	shell, ok := utils.DetectShell()
+	if !ok {
+		fmt.Println("Shell not found")
+		return
+	}
+	shellConfigFile, ok := utils.GetShellConfigFile(shell)
+	if !ok {
+		fmt.Println("Shell config file not found")
+		return
+	}
+
+	utils.RestartShellForNode(shellConfigFile)
+	os.Exit(0)
 }

@@ -35,6 +35,28 @@ func main() {
 			}
 			fmt.Println("Shell config file:", shellConfigFile)
 
+			// Handle resume from specific steps
+			if utils.ResumeFromNode {
+				cmd.AskToInstallNode()
+				cmd.AskToInstallCorepack()
+				cmd.AskToInstallBun(shell)
+				shouldRestart := cmd.AskToInstallAliases(shellConfigFile)
+				cmd.AskToInstallBrowsers()
+				cmd.AskToInstallWrap()
+				utils.Finish(shellConfigFile, shouldRestart)
+				return
+			}
+
+			if utils.ResumeFromBun {
+				cmd.AskToInstallBun(shell)
+				shouldRestart := cmd.AskToInstallAliases(shellConfigFile)
+				cmd.AskToInstallBrowsers()
+				cmd.AskToInstallWrap()
+				utils.Finish(shellConfigFile, shouldRestart)
+				return
+			}
+
+			// Normal flow
 			if !cmd.CheckBrew() {
 				cmd.InstallBrew(shellConfigFile)
 				utils.RestartShell(shellConfigFile)
@@ -56,6 +78,8 @@ func main() {
 
 	rootCmd.PersistentFlags().BoolVarP(&utils.NonInteractive, "non-interactive", "y", false, "Enable non-interactive mode (accepts all defaults)")
 	rootCmd.PersistentFlags().BoolVarP(&utils.DryRun, "dry-run", "d", false, "Simulate changes without executing them")
+	rootCmd.PersistentFlags().BoolVar(&utils.ResumeFromNode, "resume-from-node", false, "Resume installation from Node.js step (after fnm is installed)")
+	rootCmd.PersistentFlags().BoolVar(&utils.ResumeFromBun, "resume-from-bun", false, "Resume installation from Bun step (after bum is installed)")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("Error:", err)

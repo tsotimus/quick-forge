@@ -21,7 +21,7 @@ func DetectShell() (string, bool) {
 		return process.Executable(), true
 	}
 
-	// Couldn’t detect
+	// Couldn't detect
 	return "", false
 }
 
@@ -42,6 +42,16 @@ func GetShellConfigFile(shell string) (string, bool) {
 func RestartShell(shellConfigFile string) {
 	fmt.Println("\nNext step:")
 	fmt.Printf("  source ~/%s && quickforge\n", shellConfigFile)
+}
+
+func RestartShellForNode(shellConfigFile string) {
+	fmt.Println("\nfnm has been installed! Please restart your shell to continue with Node.js installation:")
+	fmt.Printf("  source ~/%s && quickforge --resume-from-node\n", shellConfigFile)
+}
+
+func RestartShellForBun(shellConfigFile string) {
+	fmt.Println("\nbum has been installed! Please restart your shell to continue with Bun installation:")
+	fmt.Printf("  source ~/%s && quickforge --resume-from-bun\n", shellConfigFile)
 }
 
 func Finish(shellConfigFile string, restartShell bool) {
