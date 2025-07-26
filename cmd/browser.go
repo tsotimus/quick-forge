@@ -85,11 +85,20 @@ func AskToInstallBrowsers() {
 	var browsersToInstall []string
 
 	if !utils.NonInteractive {
-		browsersToInstall = ui.AskMultiChoice("Which browsers do you want to install?", []string{"Google Chrome", "Zen Browser", "Arc Browser"})
+		browsersToInstall = ui.AskMultiChoice("Which browsers do you want to install?", []string{"Google Chrome", "Zen Browser", "Arc Browser", "None"})
 	} else {
 		fmt.Println("Non-interactive mode: Defaulting to install Google Chrome.")
 		browsersToInstall = []string{"Google Chrome"}
 	}
+
+	// Filter out "None" option if selected
+	var filteredBrowsers []string
+	for _, browser := range browsersToInstall {
+		if browser != "None" {
+			filteredBrowsers = append(filteredBrowsers, browser)
+		}
+	}
+	browsersToInstall = filteredBrowsers
 
 	if len(browsersToInstall) == 0 {
 		fmt.Println("Skipping browser installation.")
