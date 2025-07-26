@@ -37,7 +37,7 @@ func main() {
 
 			// Handle resume from specific steps
 			if utils.ResumeFromNode {
-				cmd.AskToInstallNode()
+				cmd.InstallNode()
 				cmd.AskToInstallCorepack()
 				cmd.AskToInstallBun(shell)
 				shouldRestart := cmd.AskToInstallAliases(shellConfigFile)
@@ -48,7 +48,7 @@ func main() {
 			}
 
 			if utils.ResumeFromBun {
-				cmd.AskToInstallBun(shell)
+				cmd.InstallBun(shell)
 				shouldRestart := cmd.AskToInstallAliases(shellConfigFile)
 				cmd.AskToInstallBrowsers()
 				cmd.AskToInstallWrap()

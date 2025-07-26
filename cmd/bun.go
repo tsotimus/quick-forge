@@ -9,31 +9,31 @@ import (
 	"github.com/tsotimus/quickforge/utils"
 )
 
-func InstallBum(shell string) {
-	commandStr := fmt.Sprintf("curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | %s", shell)
+func InstallBum(shell string) bool {
 	if utils.DryRun {
-		fmt.Printf("[Dry Run] Would install Bum with command: sh -c \"%s\"\n", commandStr)
+		fmt.Printf("[Dry Run] Would install Bum with command: curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | bash\n")
 		fmt.Println("[Dry Run] ✅ Bum would be installed successfully.")
-		return
+		return true
 	}
 
 	fmt.Println("🌐 Installing Bum (Bun version manager)...")
 
-	// Set up the command: sh -c "curl -fsSL <url> | bash"
-	cmd := exec.Command("sh", "-c", commandStr)
+	// Use bash explicitly instead of the detected shell to avoid substitution issues
+	cmd := exec.Command("bash", "-c", "curl -fsSL https://github.com/owenizedd/bum/raw/main/install.sh | bash")
 
-	// Silence stdout and stderr
-	devNull, _ := os.Open(os.DevNull)
-	defer devNull.Close()
-	cmd.Stdout = devNull
-	cmd.Stderr = devNull
+	// Capture stdout and stderr to show detailed error information
+	output, err := cmd.CombinedOutput()
 
-	if err := cmd.Run(); err != nil {
+	if err != nil {
 		fmt.Println("❌ Failed to install Bum:", err)
-		return
+		fmt.Println("--- Command output ---")
+		fmt.Println(string(output))
+		fmt.Println("----------------------")
+		return false
 	}
 
 	fmt.Println("✅ Bum installed successfully.")
+	return true
 }
 
 func InstallBun(shell string) {
@@ -83,7 +83,11 @@ func AskToInstallBun(shell string) {
 	}
 
 	// Normal flow: install bum first, then exit for shell restart
-	InstallBum(shell)
+	success := InstallBum(shell)
+	if !success {
+		fmt.Println("❌ Bum installation failed. Cannot proceed with Bun installation.")
+		return
+	}
 
 	// Get shell config for restart instruction
 	shellDetected, ok := utils.DetectShell()
