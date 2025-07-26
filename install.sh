@@ -1,6 +1,7 @@
 #!/bin/bash
 # QuickForge Installation Script
-# Usage: curl -fsSL https://raw.githubusercontent.com/RockiRider/quick-forge/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/tsotimus/quick-forge/main/install.sh | bash
+# Or with auto-update: curl -fsSL https://raw.githubusercontent.com/tsotimus/quick-forge/main/install.sh | QUICKFORGE_UPDATE=yes bash
 
 set -e
 
@@ -57,11 +58,22 @@ INSTALL_PATH="$INSTALL_DIR/quickforge"
 if command -v quickforge &> /dev/null; then
     CURRENT_VERSION=$(quickforge --version 2>/dev/null || echo "unknown")
     print_warning "QuickForge is already installed (version: $CURRENT_VERSION)"
-    read -p "Do you want to update it? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        print_status "Installation cancelled"
-        exit 0
+    
+    # Check for environment variable first
+    if [[ "${QUICKFORGE_UPDATE}" == "yes" || "${QUICKFORGE_UPDATE}" == "y" ]]; then
+        print_status "Auto-updating due to QUICKFORGE_UPDATE environment variable"
+    # Check if stdin is available (not piped)
+    elif [[ -t 0 ]]; then
+        read -p "Do you want to update it? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_status "Installation cancelled"
+            exit 0
+        fi
+    else
+        # When piped (stdin not available), default to update
+        print_status "Updating QuickForge (piped installation detected)"
+        print_status "To skip this prompt in future, use: QUICKFORGE_UPDATE=yes"
     fi
 fi
 
