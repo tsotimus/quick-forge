@@ -51,7 +51,13 @@ print_status "Detected macOS with $ARCH architecture"
 # Set variables
 REPO="tsotimus/quick-forge"
 BINARY_NAME="quickforge-darwin-$ARCH"
-INSTALL_DIR="/usr/local/bin"
+
+# Match Homebrew's install location per architecture
+if [[ "$ARCH" == "arm64" ]]; then
+    INSTALL_DIR="/opt/homebrew/bin"
+else
+    INSTALL_DIR="/usr/local/bin"
+fi
 INSTALL_PATH="$INSTALL_DIR/quickforge"
 
 # Check if quickforge is already installed
@@ -98,16 +104,30 @@ chmod +x quickforge
 
 print_status "Installing QuickForge to $INSTALL_PATH..."
 
+# Install dir may not exist yet on a fresh Mac (QuickForge often runs before Homebrew).
+if [[ ! -d "$INSTALL_DIR" ]]; then
+    print_status "Creating $INSTALL_DIR..."
+    if [[ ! -w "$(dirname "$INSTALL_DIR")" ]]; then
+        if ! sudo mkdir -p "$INSTALL_DIR"; then
+            print_error "Failed to create $INSTALL_DIR"
+            exit 1
+        fi
+    else
+        mkdir -p "$INSTALL_DIR"
+    fi
+fi
+
 # Check if we need sudo
 if [[ ! -w "$INSTALL_DIR" ]]; then
     print_status "Administrator privileges required to install to $INSTALL_DIR"
     if ! sudo mv quickforge "$INSTALL_PATH"; then
-        print_error "Failed to install QuickForge"
+        print_error "Failed to install QuickForge to $INSTALL_PATH"
+        print_error "If this persists, try: sudo mkdir -p $INSTALL_DIR"
         exit 1
     fi
 else
     if ! mv quickforge "$INSTALL_PATH"; then
-        print_error "Failed to install QuickForge"
+        print_error "Failed to install QuickForge to $INSTALL_PATH"
         exit 1
     fi
 fi
