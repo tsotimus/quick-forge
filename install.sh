@@ -98,16 +98,31 @@ chmod +x quickforge
 
 print_status "Installing QuickForge to $INSTALL_PATH..."
 
+# /usr/local/bin often doesn't exist on fresh Apple Silicon Macs until something
+# creates it (Homebrew installs to /opt/homebrew/bin instead).
+if [[ ! -d "$INSTALL_DIR" ]]; then
+    print_status "Creating $INSTALL_DIR..."
+    if [[ ! -w "$(dirname "$INSTALL_DIR")" ]]; then
+        if ! sudo mkdir -p "$INSTALL_DIR"; then
+            print_error "Failed to create $INSTALL_DIR"
+            exit 1
+        fi
+    else
+        mkdir -p "$INSTALL_DIR"
+    fi
+fi
+
 # Check if we need sudo
 if [[ ! -w "$INSTALL_DIR" ]]; then
     print_status "Administrator privileges required to install to $INSTALL_DIR"
     if ! sudo mv quickforge "$INSTALL_PATH"; then
-        print_error "Failed to install QuickForge"
+        print_error "Failed to install QuickForge to $INSTALL_PATH"
+        print_error "If this persists, try: sudo mkdir -p $INSTALL_DIR"
         exit 1
     fi
 else
     if ! mv quickforge "$INSTALL_PATH"; then
-        print_error "Failed to install QuickForge"
+        print_error "Failed to install QuickForge to $INSTALL_PATH"
         exit 1
     fi
 fi
