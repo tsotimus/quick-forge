@@ -51,7 +51,13 @@ print_status "Detected macOS with $ARCH architecture"
 # Set variables
 REPO="tsotimus/quick-forge"
 BINARY_NAME="quickforge-darwin-$ARCH"
-INSTALL_DIR="/usr/local/bin"
+
+# Match Homebrew's install location per architecture
+if [[ "$ARCH" == "arm64" ]]; then
+    INSTALL_DIR="/opt/homebrew/bin"
+else
+    INSTALL_DIR="/usr/local/bin"
+fi
 INSTALL_PATH="$INSTALL_DIR/quickforge"
 
 # Check if quickforge is already installed
@@ -98,8 +104,7 @@ chmod +x quickforge
 
 print_status "Installing QuickForge to $INSTALL_PATH..."
 
-# /usr/local/bin often doesn't exist on fresh Apple Silicon Macs until something
-# creates it (Homebrew installs to /opt/homebrew/bin instead).
+# Install dir may not exist yet on a fresh Mac (QuickForge often runs before Homebrew).
 if [[ ! -d "$INSTALL_DIR" ]]; then
     print_status "Creating $INSTALL_DIR..."
     if [[ ! -w "$(dirname "$INSTALL_DIR")" ]]; then
